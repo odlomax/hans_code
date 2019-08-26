@@ -1,0 +1,25 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module f_module ! in 
+    interface  ! in :f_module
+        module m_interpolate ! in :f_module:interpolate.f90
+            function vector_interp_3d(x,y,z,inv_dx,inv_dy,inv_dz,x_arr,y_arr,z_arr,f_arr) result (f) ! in :f_module:interpolate.f90:m_interpolate
+                real(kind=8) intent(in) :: x
+                real(kind=8) intent(in) :: y
+                real(kind=8) intent(in) :: z
+                real(kind=8),intent(in) :: inv_dx
+                real(kind=8),intent(in) :: inv_dy
+                real(kind=8),intent(in) :: inv_dz
+                real(kind=8) dimension(:),intent(in) :: x_arr
+                real(kind=8) dimension(:),intent(in) :: y_arr
+                real(kind=8) dimension(:),intent(in) :: z_arr
+                real(kind=8) dimension(:,:,:,:),intent(in) :: f_arr
+                real(kind=8) dimension(size(f_arr,1)) :: f
+            end function vector_interp_3d
+        end module m_interpolate
+    end interface 
+end python module f_module
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
