@@ -24,7 +24,7 @@ class vector_interp_3d:
         z_arr[n_z]: float
             array of z values
             
-        f_arr[n_v]: float
+        f_arr[n_v,n_x,n_y,n_z]: float
             list of f arrays, each with shape [n_x,n_y,n_z]
         
         """
@@ -33,22 +33,17 @@ class vector_interp_3d:
         n_x=x_arr.size
         n_y=y_arr.size
         n_z=z_arr.size
-        n_v=len(f_arr)
         
         # associate array
         self.x_arr=x_arr
         self.y_arr=y_arr
         self.z_arr=z_arr
+        self.f_arr=f_arr
         
         # calc 1/dx, 1/dy, 1/dz
         self.inv_dx=(n_x-1)/(self.x_arr[-1]-self.x_arr[0])
         self.inv_dy=(n_y-1)/(self.y_arr[-1]-self.y_arr[0])
         self.inv_dz=(n_z-1)/(self.z_arr[-1]-self.z_arr[0])
-        
-        # pack f_arr into column-major 4d array
-        self.f_arr=np.zeros((n_v,n_x,n_y,n_z),dtype=np.float,order="f")
-        for i in range(len(f_arr)):
-            self.f_arr[i,...]=f_arr[i]
         
         return
     

@@ -33,16 +33,19 @@ z_arr=np.linspace(0.,1.,n_z)
 
 X,Y,Z=np.meshgrid(x_arr,y_arr,z_arr,indexing="ij")
 
-# generate 2 scalar fields
-f_arr_0=exp_r(X,Y,Z)
-f_arr_1=exp2_r(X,Y,Z)
+# allocate memory for vector field (order="f" is important)
+f_arr=np.zeros((2,n_x,n_y,n_z),dtype=np.float,order="f")
+
+# get vector field
+f_arr[0,...]=exp_r(X,Y,Z)
+f_arr[1,...]=exp2_r(X,Y,Z)
 
 # initialise Scipy interpolator
-sp_interp_0=RegularGridInterpolator((x_arr,y_arr,z_arr),f_arr_0)
-sp_interp_1=RegularGridInterpolator((x_arr,y_arr,z_arr),f_arr_1)
+sp_interp_0=RegularGridInterpolator((x_arr,y_arr,z_arr),f_arr[0,...])
+sp_interp_1=RegularGridInterpolator((x_arr,y_arr,z_arr),f_arr[1,...])
 
 # initialise Fortran interpolator
-f_interp=vector_interp_3d(x_arr,y_arr,z_arr,(f_arr_0,f_arr_1))
+f_interp=vector_interp_3d(x_arr,y_arr,z_arr,f_arr)
 
 
 # do some imshows of the fields to make sure they're not garbage
@@ -52,7 +55,7 @@ plt.figure(1)
 plt.imshow(f_interp.f_arr[1,...].mean(axis=2))
 
 # generate some random coordinates
-n_point=1000
+n_point=10000
 x=np.random.uniform(0.,1.,(n_point,3))
 
 # allocate some arrays for field values
@@ -78,6 +81,6 @@ plt.show()
 
 # plot field projections
 plt.figure(3)
-plt.plot(x[:,0],f[:,0],".")
 plt.plot(x[:,0],f[:,1],".")
+plt.plot(x[:,0],f[:,0],".")
 plt.show()
