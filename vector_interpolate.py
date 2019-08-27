@@ -6,7 +6,7 @@ class vector_interp_3d:
     
     # 3d vector field interpolator
     
-    def __init__(self,x_arr,y_arr,z_arr,f_arr):
+    def __init__(self,x_arr,y_arr,z_arr,f_list=None,f_ndarray=None):
         
         """
         
@@ -24,8 +24,11 @@ class vector_interp_3d:
         z_arr[n_z]: float
             array of z values
             
-        f_arr[n_v,n_x,n_y,n_z]: float
-            list of f arrays, each with shape [n_x,n_y,n_z]
+        f_list[n_v]: float (optional)
+            list of n_v scalar fields with shape [n_x,n_y,n_z]
+        
+        f_ndarray[n_v,n_x,n_y,n_z]: float (optional)
+             vector field
         
         """
         
@@ -38,7 +41,29 @@ class vector_interp_3d:
         self.x_arr=x_arr
         self.y_arr=y_arr
         self.z_arr=z_arr
-        self.f_arr=f_arr
+        if f_list is not None:
+            
+            # pack f_arr into column-major 4d array
+            self.f_arr=np.zeros((len(f_list),n_x,n_y,n_z),dtype=np.float,order="f")
+            for i in range(len(f_list)):
+                self.f_arr[i,...]=f_list[i]
+                
+        elif f_ndarray is not None:
+            
+            # associate array
+            if np.isfortran(f_ndarray):
+                
+                # already in column-major order
+                self.f_arr=f_ndarray
+            else:
+                
+                # convert to column-major order
+                self.f_arr=np.asfortranarray(f_ndarray)
+            
+        else:
+            print("Error, no f_arr given.")
+            return
+        
         
         # calc 1/dx, 1/dy, 1/dz
         self.inv_dx=(n_x-1)/(self.x_arr[-1]-self.x_arr[0])
